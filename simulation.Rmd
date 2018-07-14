@@ -65,8 +65,8 @@ The difference here is larger than the one regarding the mean, but they are stil
 ```{r}
 ggplot(data = exponential_means, aes(x = means)) + 
   geom_histogram(aes(y=..density..), alpha=0.1, binwidth=0.2) + 
-  stat_function(fun = dnorm, args = list(mean = theoretical_mean, sd = sqrt(theoretical_variance)), colour = "red", size=1) + 
-  geom_density(colour="blue", size=1)
+  stat_function(fun = dnorm, args = list(mean = theoretical_mean, sd = sqrt(theoretical_variance)), colour = "blue", size=1) + 
+  geom_density(colour="red", size=1)
 ```
 
 The two graphs overlap quite well with each other.

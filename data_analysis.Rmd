@@ -1,0 +1,103 @@
+---
+title: "data-analysis"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Tasks
+
+1. Load the ToothGrowth data and perform some basic exploratory data analysis
+2. Provide a basic summary of the data.
+3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+4. State the conclusions and the assumptions needed for my conclusions.
+
+Load libraries
+```{r}
+library(ggplot2)
+library(dplyr, warn.conflicts = FALSE)
+library(datasets)
+```
+
+Load data
+```{r}
+data(ToothGrowth)
+tooth_growth <- ToothGrowth
+```
+
+## Exploratory data analysis
+
+```{r}
+p <- ggplot(tooth_growth,aes(factor(supp),len))
+p+geom_boxplot(aes(fill=supp))+facet_grid(.~dose)+labs(title="Effect of Supp and Dose on Tooth Growth")
+```
+
+Based on the graph, both supps seem to have an positive impact on tooth growth. Increasing the dose of OJ from 0.5 to 1 seems to have a much bigger impact than from 1 to 2. On the other hand, increasing the dose of VC seems to help tooth growth more steadily; its impact matches that of OJ at dose of 2. I don't see much of a pattern in distributions. 
+
+## Summarize data
+
+Summarize data
+```{r}
+str(tooth_growth)
+summary(tooth_growth)
+head(tooth_growth)
+```
+
+```{r}
+unique(tooth_growth$dose)
+```
+
+Based on the summary, there are 60 observations with two variations of supp(OJ & VC) and three variations of dose(0.5, 1 & 2).
+
+## Tooth growth comparison by supp and dose 
+
+Test if there is a difference between the two supps on tooth growth impact
+```{r}
+len <- tooth_growth %>% select(len) %>% unlist()
+supp <- tooth_growth %>% select(supp) %>% unlist()
+t.test(len~supp, paired=FALSE)
+```
+
+The p-value is higher than 0.5, so we conclude that there is no difference in impacts on tooth growth between the two supps. 
+
+Test if there is a difference between different dose levels on tooth growth impact
+
+Between dose 1 and 2
+```{r}
+len_1_2 <- tooth_growth %>% filter(dose %in% c(1,2)) %>% select(len) %>% unlist()
+dose_1_2 <- tooth_growth %>% filter(dose %in% c(1,2)) %>% select(dose) %>% unlist()
+(test_1_2 <- t.test(len_1_2~dose_1_2, paired = FALSE))
+```
+
+Between dose 0.5 and 1
+```{r}
+len_0.5_1 <- tooth_growth %>% filter(dose %in% c(0.5,1)) %>% select(len) %>% unlist()
+dose_0.5_1 <- tooth_growth %>% filter(dose %in% c(0.5,1)) %>% select(dose) %>% unlist()
+(test_0.5_1 <- t.test(len_0.5_1~dose_0.5_1, paired = FALSE))
+```
+
+In both tests, the P-values are significantly lower than 0.05, so we reject the null hypothesis in both cases. We conclude that there is a significant difference in tooth growth by increasing dose level. 
+
+## Conclusions and assumptions
+
+Conclusions:
+
+1. There is no significant difference between the impact of the two supps on tooth growth.
+
+2. There is a significant difference between lower and high dose levels in increasing tooth growth.
+
+Assumptions:
+
+1. The population distribution is normal.
+
+2. The dose and supp are randomly assigned.
+
+3. The sample is representative of the population.
+
+
+
+
+
+
